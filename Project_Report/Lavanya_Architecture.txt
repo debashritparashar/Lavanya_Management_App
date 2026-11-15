@@ -1,0 +1,158 @@
+
+Design Document - https://docs.google.com/document/d/1yT-HLx7iFNPm5EPrOXSxRbH7g2jBi8aMbMdeiUIuyt4/edit?usp=sharing
+
+
+
+- Led the frontend modernization by upgrading Bootstrap from version 3 to 5 and migrating Angular applications from version 8 to 19/20.
+- Migrated backend applications from JDK 13 to JDK 17, ensuring compatibility and stability.
+- Identified and resolved post-migration defects and production issues to ensure application reliability.
+- Independently managed 14 microservices, handling local builds, testing, troubleshooting, and deployments to QA servers.
+- Collaborated closely with the QA team to investigate, analyze, and resolve issues identified during post-migration testing.
+- Analyzed SAST and DAST security scan reports and addressed identified vulnerabilities to improve application security.
+- Upgraded outdated and end-of-life (EOL) dependencies to supported versions, ensuring better security, maintainability, and compatibility.
+
+lavanya_app/
+├── angular.json                         # Angular 22 @angular/build:application config + DEV/UAT/PROD fileReplacements
+├── package.json                         # Angular 22.1.0 dependencies, SSR, Tailwind CSS, Vitest & build scripts
+├── tailwind.config.js                   # Scans ./src/**/*.{html,ts} for utility classes and Poppins typography
+├── postcss.config.js                    # PostCSS pipeline for Tailwind + Autoprefixer
+├── tsconfig.json / tsconfig.app.json    # TypeScript 6.0 bundler moduleResolution & strict Angular compiler flags
+├── public/                              # Static assets served at root (favicon.ico)
+└── src/
+    ├── index.html                       # Root HTML shell with Poppins Google Font & <app-root>
+    ├── styles.css                       # Global stylesheet (@tailwind directives + .cta-pill-gradient)
+    ├── main.ts                          # Browser entry point: bootstrapApplication(App, appConfig)
+    ├── main.server.ts                   # SSR entry point: bootstrapApplication(App, config)
+    ├── server.ts                        # Express 5 + AngularNodeAppEngine SSR request handler
+    ├── environments/                    # Multi-stage environment configuration
+    │   ├── environment.model.ts         # Strictly typed EnvironmentConfig interface
+    │   ├── environment.ts               # Default / DEV environment (localhost:8080)
+    │   ├── environment.development.ts   # Explicit DEV environment target
+    │   ├── environment.uat.ts           # UAT Staging environment (uat-api.lavanyacosmossociety.in)
+    │   └── environment.prod.ts          # Production environment (api.lavanyacosmossociety.in)
+    └── app/
+        ├── app.ts                       # Root standalone component importing RouterOutlet, CoreModule, SharedModule
+        ├── app.html                     # Root template (<app-navbar>, <router-outlet>, <app-footer>, <app-demo-modal>)
+        ├── app.css                      # Scoped host styles for App root component
+        ├── app.spec.ts                  # Root unit test specification (Vitest / TestBed)
+        ├── app.config.ts                # Browser ApplicationConfig (Zone coalescing, Router, SelectivePreloading, Hydration)
+        ├── app.config.server.ts         # SSR ApplicationConfig merging server rendering & serverRoutes
+        ├── app.routes.ts                # Top-level lazy-loaded route definitions (19 loadChildren() chunks)
+        ├── app.routes.server.ts         # ServerRoute render modes (Prerender for '/', Client for dynamic feature routes)
+        ├── core/                        # Singleton services, models, preloading strategy, and app shell layout
+        │   ├── core.module.ts           # Declares & exports NavbarComponent and FooterComponent with re-import guard
+        │   ├── models/
+        │   │   └── society.models.ts    # TypeScript interfaces: ProductHero, FeatureItem, CommunityProject
+        │   ├── services/
+        │   │   └── society-data.service.ts # Root signal store for products, 15 features, and sandbox state
+        │   ├── strategies/
+        │   │   └── selective-preloading.strategy.ts # Preloads only high-priority routes marked data: { preload: true }
+        │   └── components/
+        │       ├── navbar/navbar.component.ts # Deep/Light Blue LCS logo, Products, 15-item Features & About dropdowns
+        │       └── footer/footer.component.ts # Global footer & quick module links
+        ├── shared/                      # Reusable UI components & form utilities
+        │   ├── shared.module.ts         # Declares & exports DemoModalComponent, CommonModule, FormsModule
+        │   └── components/
+        │       └── demo-modal/demo-modal.component.ts # Interactive "Schedule A Demo" modal dialog
+        └── features/                    # 19 Lazy-Loaded Feature Modules (4 Core + 15 Society Management Services)
+            ├── home/                    # Landing page (HomePageComponent + HeroBannerComponent with SVG artwork)
+            ├── sandbox/                 # Multi-Community Command Center interactive filter & metrics simulator
+            ├── catalog/                 # 15-Feature filterable grid with deep links to each service page
+            ├── auth/                    # Admin Portal Login component
+            ├── payment-management/      # .module.ts, -routing.module.ts, .component.ts, .component.html, .service.ts
+            ├── expense-management/      # .module.ts, -routing.module.ts, .component.ts, .component.html, .service.ts
+            ├── accounting-reports/      # .module.ts, -routing.module.ts, .component.ts, .component.html, .service.ts
+            ├── digital-invoice-receipt/ # .module.ts, -routing.module.ts, .component.ts, .component.html, .service.ts
+            ├── amenities-event-booking/ # .module.ts, -routing.module.ts, .component.ts, .component.html, .service.ts
+            ├── meeting-management/      # .module.ts, -routing.module.ts, .component.ts, .component.html, .service.ts
+            ├── helpdesk-broadcast/      # .module.ts, -routing.module.ts, .component.ts, .component.html, .service.ts
+            ├── visitor-management/      # .module.ts, -routing.module.ts, .component.ts, .component.html, .service.ts
+            ├── staff-vendor-management/ # .module.ts, -routing.module.ts, .component.ts, .component.html, .service.ts
+            ├── parking-management/      # .module.ts, -routing.module.ts, .component.ts, .component.html, .service.ts
+            ├── document-management/     # .module.ts, -routing.module.ts, .component.ts, .component.html, .service.ts
+            ├── polling-notice-board/    # .module.ts, -routing.module.ts, .component.ts, .component.html, .service.ts
+            ├── arrival-alert-system/    # .module.ts, -routing.module.ts, .component.ts, .component.html, .service.ts
+            ├── multiple-gate-management/# .module.ts, -routing.module.ts, .component.ts, .component.html, .service.ts
+            └── guard-patrolling/        # .module.ts, -routing.module.ts, .component.ts, .component.html, .service.ts
+			
+			
+Step by step Implementation for Backend 
+
+Phase 1 – Core architecture
+[ ] Eureka Service Discovery
+[ ] Spring Cloud API Gateway
+[ ] Feign Client
+[ ] Spring Cloud LoadBalancer
+[ ] Spring Cloud Config
+
+
+Phase 2 – Resilience
+[ ] Circuit Breaker
+[ ] Retry and Exponential Backoff
+[ ] Rate Limiter
+[ ] Bulkhead
+[ ] Time Limiter and Fallback
+
+
+Phase 3 – Security
+[ ] JWT and Refresh Token Rotation
+[ ] OAuth2 and OpenID Connect
+[ ] RBAC and ABAC
+[ ] Redis Token Blacklisting
+[ ] Service-to-Service Authentication
+
+
+Phase 4 – Performance
+[ ] Redis Distributed Cache
+[ ] Caffeine Local Cache
+[ ] Database Indexing
+[ ] HikariCP Connection Pooling
+[ ] Pagination and Query Optimization
+
+
+Phase 5 – Messaging and transactions
+[ ] Kafka / RabbitMQ
+[ ] Event-Driven Architecture
+[ ] Saga Pattern
+[ ] Transactional Outbox
+[ ] Dead Letter Queue and Idempotency
+
+
+Phase 6 – Monitoring and deployment
+[ ] Actuator and Micrometer
+[ ] Prometheus and Grafana
+[ ] OpenTelemetry Distributed Tracing
+[ ] ELK Centralized Logging
+[ ] Docker, Kubernetes and Jenkins CI/CD
+
+
+________________________________________________________________________________________________________________________________________________________________________
+
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        # 1. Finance & Accounting
+        - id: finance-service-route
+          uri: lb://FINANCE-SERVICE
+          predicates:
+            - Path=/api/payments/**, /api/expenses/**, /api/accounting/**, /api/invoices/**
+
+        # 2. Gate, Security & Parking
+        - id: security-gate-service-route
+          uri: lb://SECURITY-GATE-SERVICE
+          predicates:
+            - Path=/api/visitors/**, /api/arrival-alerts/**, /api/gates/**, /api/patrolling/**, /api/parking/**
+
+        # 3. Governance, Helpdesk & Communications
+        - id: community-engagement-service-route
+          uri: lb://COMMUNITY-ENGAGEMENT-SERVICE
+          predicates:
+            - Path=/api/helpdesk/**, /api/polls/**, /api/notices/**, /api/meetings/**
+
+        # 4. Amenities, Operations & File Management
+        - id: facility-admin-service-route
+          uri: lb://FACILITY-ADMIN-SERVICE
+          predicates:
+            - Path=/api/amenities/**, /api/staff/**, /api/vendors/**, /api/documents/**
