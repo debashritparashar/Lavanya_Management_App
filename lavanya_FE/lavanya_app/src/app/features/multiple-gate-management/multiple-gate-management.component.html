@@ -1,0 +1,104 @@
+<section class="w-full bg-gradient-to-b from-[#f0f7ff] via-[#f8fbff] to-white py-12 px-4 sm:px-8 lg:px-16">
+  <div class="max-w-[1200px] mx-auto">
+    <!-- Feature Header (Matches Screenshot 2 in Deep & Light Blue Theme) -->
+    <div class="text-center max-w-4xl mx-auto">
+      <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold bg-sky-100 text-[#0284c7] mb-3">
+        Lazy-Loaded Module • MultipleGateManagementComponent + MultipleGateManagementService
+      </span>
+      <h1 class="text-3xl sm:text-5xl font-normal text-[#0284c7] tracking-tight">
+        Multiple Gate Management
+      </h1>
+      <p class="mt-6 text-slate-800 text-base sm:text-[18px] leading-[1.8] text-justify sm:text-center">
+        Coordinate entry and exit across all Lavanya Cosmos township gates—including Main Boulevard Entry, Service & Vendor Gate, and Pedestrian Turnstiles—with centralized ANPR cameras.
+      </p>
+
+      <!-- Google Play & App Store Badges -->
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+        <button type="button" class="bg-black text-white rounded-xl px-5 py-2.5 flex items-center gap-3 shadow-md">
+          <div class="text-left">
+            <div class="text-[9px] uppercase tracking-wider text-slate-300">ANDROID APP ON</div>
+            <div class="text-lg font-semibold leading-tight">Google play</div>
+          </div>
+        </button>
+        <button type="button" class="bg-black text-white rounded-xl px-5 py-2.5 flex items-center gap-3 shadow-md">
+          <div class="text-left">
+            <div class="text-[10px] text-slate-300">Download on the</div>
+            <div class="text-lg font-semibold leading-tight">App Store</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Interactive Mobile Preview & Service Operations Console -->
+    <div class="mt-10 bg-white rounded-3xl border border-sky-100 shadow-lg p-6 sm:p-8">
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-100">
+        <div>
+          <h2 class="text-xl font-bold text-[#0f2c59]">Multiple Gate Management — Service Operations</h2>
+          <p class="text-xs text-slate-500">Powered by MultipleGateManagementService</p>
+        </div>
+        <div class="flex gap-3">
+          <div class="px-4 py-2 rounded-xl bg-sky-50 text-[#0f2c59] text-xs font-bold">
+            Total: {{ service.totalCount() }}
+          </div>
+          <div class="px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-bold">
+            Verified: {{ service.verifiedCount() }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Record Form -->
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-3">
+        <input
+          type="text"
+          [value]="nameInput()"
+          (input)="nameInput.set($any($event.target).value)"
+          placeholder="Name / Flat / Vendor"
+          class="px-3.5 py-2.5 rounded-xl border border-sky-200 text-sm" />
+        <input
+          type="text"
+          [value]="roleInput()"
+          (input)="roleInput.set($any($event.target).value)"
+          placeholder="Role / Category / Description"
+          class="px-3.5 py-2.5 rounded-xl border border-sky-200 text-sm" />
+        <input
+          type="text"
+          [value]="metaInput()"
+          (input)="metaInput.set($any($event.target).value)"
+          placeholder="Amount / Tax / Schedule"
+          class="px-3.5 py-2.5 rounded-xl border border-sky-200 text-sm" />
+        <button
+          type="button"
+          (click)="onAdd()"
+          class="cta-pill-gradient text-white font-semibold text-sm px-5 py-2.5 rounded-xl">
+          + Add via Service
+        </button>
+      </div>
+
+      <!-- Records List -->
+      <div class="mt-6 divide-y divide-slate-100">
+        @for (rec of service.records(); track rec.id) {
+          <div class="py-3.5 flex items-center justify-between gap-4">
+            <div>
+              <div class="font-semibold text-[#0f2c59]">{{ rec.name }}</div>
+              <div class="text-xs text-slate-500">{{ rec.roleOrType }} • {{ rec.amountOrMeta }}</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                (click)="service.toggleStatus(rec.id)"
+                class="px-3 py-1 rounded-lg text-xs font-semibold bg-sky-50 text-[#0284c7]">
+                {{ rec.verified ? '✓ Verified' : 'Verify' }}
+              </button>
+              <button
+                type="button"
+                (click)="service.deleteRecord(rec.id)"
+                class="px-3 py-1 rounded-lg text-xs font-semibold bg-rose-50 text-rose-600">
+                Delete
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

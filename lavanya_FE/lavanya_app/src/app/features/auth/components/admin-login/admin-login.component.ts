@@ -1,0 +1,24 @@
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
+
+@Component({
+  selector: 'app-admin-login',
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <section class="py-20 bg-slate-50 flex items-center justify-center px-4">
+      <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-xl border border-sky-100">
+        <div class="text-xs font-bold uppercase tracking-wider text-[#0284c7]">Lazy-Loaded AuthModule</div>
+        <h2 class="text-2xl font-bold text-[#0f2c59] mt-1">Lavanya Cosmos Admin Console</h2>
+        <div class="space-y-4 mt-6">
+          <input type="email" [value]="email()" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm" />
+          <button type="button" class="w-full cta-pill-gradient text-white font-medium text-sm py-3 rounded-full">
+            Sign In to Lavanya Cosmos
+          </button>
+        </div>
+      </div>
+    </section>
+  `
+})
+export class AdminLoginComponent {
+  readonly email = signal('admin@lavanyacosmos.in');
+}

@@ -1,0 +1,8 @@
+<div class="min-h-screen flex flex-col bg-white selection:bg-sky-600 selection:text-white">
+  <app-navbar (scheduleDemo)="dataService.openDemoModal()"></app-navbar>
+  <main class="flex-1">
+    <router-outlet></router-outlet>
+  </main>
+  <app-footer (scheduleDemo)="dataService.openDemoModal()"></app-footer>
+  <app-demo-modal></app-demo-modal>
+</div>
